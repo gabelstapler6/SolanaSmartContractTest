@@ -68,8 +68,10 @@ export async function createMintToken(mintAuthorityPubkey: PublicKey, decimals: 
 
     const accountAddress = await mint.createAssociatedTokenAccount(mintAuthorityPubkey);
     await getAndLogSolBalance(payer.publicKey, connection);
-
+    
     await mint.mintTo(accountAddress, mintAuthorityPubkey, [], LAMPORTS_PER_SOL * amount);
 
     await getAndLogSolBalance(payer.publicKey, connection);
+    // disable minting forever
+    mint.setAuthority(mint.publicKey, null, 'MintTokens', mintAuthorityPubkey, []);
 }

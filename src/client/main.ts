@@ -8,9 +8,9 @@ global.TextEncoder = require('util').TextEncoder;
 
 async function main() {
     let connection = await establishConnection();
-    let payerKeypair: Keypair = await createKeypairFromFile("/home/andi/Development/Projects/Sphere/phantom.json");
+    let payerKeypair: Keypair = await getPayer();
     establishPayer(payerKeypair);
-    await createMintToken(payerKeypair.publicKey, 9, 100);
+    await createMintToken(payerKeypair.publicKey, 0, 1);
 }
 
 main().then(
