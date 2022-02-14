@@ -1,0 +1,29 @@
+tokenid: 3UXnbe4eRr1Yao5teFPsRqhHxGHMCh3hKajP7uyjsz4u
+multisig account id: D2y7NNgK9h2cmhvC2uXak2t92xgR4Wooc8uPurGjS3vX
+nonce pubkey: 1kAmMUDqF5oUvf1pmo2GsdfirxiQyiWW4DWx4U1ZnvJ
+nonce sig: 5XkvT3YwcExKhcKjX4mea8di1su1kZGFQDoUNLaE6qmcEkuFeJGvu8ByZ19ai8NSoiovdJ4CUiMbfUgnJKunaCP7
+blockhash 9zskLu29vSphHPKyjERgAEdf7KcNuUuasVVYRZuvXSNQ
+my account id: 8aMJX4CztSbzBYEkf2kpNgG7AiPcjb4rAt4115ES3mxx
+pubkey: 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA
+
+spl-token mint 3UXnbe4eRr1Yao5teFPsRqhHxGHMCh3hKajP7uyjsz4u 1000 8aMJX4CztSbzBYEkf2kpNgG7AiPcjb4rAt4115ES3mxx \
+--owner D2y7NNgK9h2cmhvC2uXak2t92xgR4Wooc8uPurGjS3vX \
+--multisig-signer phantom.json \
+--multisig-signer AW4khaXDUe6nLaKV5nFMew1787v1vUGSQ1fQu6Urm6zs \
+--blockhash 9zskLu29vSphHPKyjERgAEdf7KcNuUuasVVYRZuvXSNQ \
+--fee-payer 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA \
+--nonce 1kAmMUDqF5oUvf1pmo2GsdfirxiQyiWW4DWx4U1ZnvJ \
+--nonce-authority 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA \
+--sign-only \
+--mint-decimals 0
+
+spl-token mint 3UXnbe4eRr1Yao5teFPsRqhHxGHMCh3hKajP7uyjsz4u 1000 8aMJX4CztSbzBYEkf2kpNgG7AiPcjb4rAt4115ES3mxx \
+--owner D2y7NNgK9h2cmhvC2uXak2t92xgR4Wooc8uPurGjS3vX \
+--multisig-signer 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA \
+--multisig-signer AW4khaXDUe6nLaKV5nFMew1787v1vUGSQ1fQu6Urm6zs \
+--blockhash 9zskLu29vSphHPKyjERgAEdf7KcNuUuasVVYRZuvXSNQ \
+--fee-payer 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA \
+--nonce 1kAmMUDqF5oUvf1pmo2GsdfirxiQyiWW4DWx4U1ZnvJ \
+--nonce-authority 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA \
+--signer 8ge4vVUrEGzbR8Qu2BUZCgBzgNTahx7mp88BAFQQYWFA=3TKc3HSDDTcCd7m4qdXg9G5Y3QjD5ujuJeve2TCr1v9YU1wdCUt5fRx94q6bHXUessFK9UD5a3xDG9ntf2aVD55M
+--signer 
