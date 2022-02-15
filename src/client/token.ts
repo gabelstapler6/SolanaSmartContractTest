@@ -6,10 +6,12 @@ import {
     Keypair,
     LAMPORTS_PER_SOL,
     PublicKey,
+    sendAndConfirmTransaction,
+    SystemProgram,
     Transaction
 } from '@solana/web3.js';
 
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, MintLayout, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 import fs from 'mz/fs';
 import path from 'path';
@@ -19,6 +21,7 @@ import { getPayer, getRpcUrl, createKeypairFromFile, getAndLogSolBalance } from 
 import { Key } from 'mz/readline';
 import { getRedeemPrintingV2BidTransactions } from '@metaplex/js/lib/actions';
 
+const TRANSACTION_FEE = 10000;
 
 var connection: Connection;
 
@@ -37,21 +40,15 @@ export function establishPayer(keypair: Keypair) {
     payer = keypair;
 };
 
+export async function createAndMintToken(mintAuthorityPubkey: PublicKey, decimals: number, amountToMint: number) {
 
+    let balanceNeeded = await Token.getMinBalanceRentForExemptMint(connection);
+    balanceNeeded += await Token.getMinBalanceRentForExemptAccount(connection);
+    balanceNeeded += TRANSACTION_FEE * 2;
 
-class MintToken {
-    constructor(public mintAuthority: Keypair, public mint: Token) {
-    }
-    /**
-     * name
-     */
-    public name() {
+    console.log("balance needed", balanceNeeded);
 
-    }
-}
-
-export async function createMintToken(mintAuthorityPubkey: PublicKey, decimals: number, amount: number) {
-    let bal = await getAndLogSolBalance(payer.publicKey, connection);
+    let balance = await connection.getBalance(payer.publicKey);
 
     const mint = await Token.createMint(
         connection,
@@ -61,17 +58,98 @@ export async function createMintToken(mintAuthorityPubkey: PublicKey, decimals: 
         decimals,
         TOKEN_PROGRAM_ID
     );
-    console.log('Created token', mint.publicKey.toBase58());
-    let newBal = await getAndLogSolBalance(payer.publicKey, connection);
 
-    console.log('Payer payed', bal - newBal, 'SOL transaction fee');
+    const accountId = await mint.createAssociatedTokenAccount(mintAuthorityPubkey);
 
-    const accountAddress = await mint.createAssociatedTokenAccount(mintAuthorityPubkey);
-    await getAndLogSolBalance(payer.publicKey, connection);
-    
-    await mint.mintTo(accountAddress, mintAuthorityPubkey, [], LAMPORTS_PER_SOL * amount);
+    await mint.mintTo(accountId, mintAuthorityPubkey, [], LAMPORTS_PER_SOL * amountToMint);
 
-    await getAndLogSolBalance(payer.publicKey, connection);
-    // disable minting forever
-    mint.setAuthority(mint.publicKey, null, 'MintTokens', mintAuthorityPubkey, []);
+    // await mint.setAuthority(mint.publicKey, null, 'MintTokens', mintAuthorityPubkey, []);
+
+    let remainingBalance = await connection.getBalance(payer.publicKey);
+
+    console.log("payer payed", balance - remainingBalance);
+    console.log("minted", amountToMint, mint.publicKey.toBase58());
+}
+
+
+
+export async function createMintToken(mintAuthorityPubkey: PublicKey, decimals: number, amount: number) {
+
+    // const token = new Token(
+    //     connection,
+    //     mintAccount.publicKey,
+    //     programId,
+    //     payer,
+    // );
+
+    const mintAccount = Keypair.generate();
+
+    // Allocate memory for the account
+    let balanceNeeded = await Token.getMinBalanceRentForExemptMint(
+        connection,
+    );
+    balanceNeeded += await Token.getMinBalanceRentForExemptAccount(connection);
+
+    console.log("need balance", balanceNeeded);
+
+    let balance = await connection.getBalance(payer.publicKey);
+
+    const transaction = new Transaction();
+    transaction.add(
+        SystemProgram.createAccount({
+            fromPubkey: payer.publicKey,
+            newAccountPubkey: mintAccount.publicKey,
+            lamports: balanceNeeded,
+            space: MintLayout.span,
+            programId: TOKEN_PROGRAM_ID,
+        }),
+    );
+
+    transaction.add(
+        Token.createInitMintInstruction(
+            TOKEN_PROGRAM_ID,
+            mintAccount.publicKey,
+            decimals,
+            mintAuthorityPubkey,
+            null,
+        ),
+    );
+
+    const associatedAddress = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintAccount.publicKey,
+        mintAuthorityPubkey
+    );
+
+    transaction.add(
+        Token.createAssociatedTokenAccountInstruction(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_PROGRAM_ID,
+            mintAccount.publicKey,
+            associatedAddress,
+            mintAuthorityPubkey,
+            payer.publicKey,
+        ),
+    );
+
+    transaction.add(
+        Token.createMintToInstruction(
+            TOKEN_PROGRAM_ID,
+            mintAccount.publicKey,
+            associatedAddress,
+            mintAuthorityPubkey,
+            [],
+            amount
+        )
+    );
+
+    let response = await sendAndConfirmTransaction(connection, transaction, [payer, mintAccount]);
+
+    console.log(response);
+    console.log("minted", amount, mintAccount.publicKey.toBase58());
+
+    let newBalance = await connection.getBalance(payer.publicKey);
+
+    console.log("payer payed", balance - newBalance);
 }

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
-
 import {
     Keypair,
     Connection,
@@ -13,23 +9,24 @@ import {
     sendAndConfirmTransaction,
 } from '@solana/web3.js';
 
-import fs from 'mz/fs';
-import path from 'path';
-import * as borsh from 'borsh';
+import { DataV2 } from '@metaplex-foundation/mpl-token-metadata';
 
 import { programs, MetadataJson, MetadataJsonProperties, MetaDataJsonCategory } from '@metaplex/js';
 
 import { getPayer, getRpcUrl, createKeypairFromFile } from './utils';
-import { DataV2 } from '@metaplex-foundation/mpl-token-metadata';
 
-/**
- * Connection to the network
- */
+
+
 let connection: Connection;
 
 let programId: PublicKey;
 
 const Metadata = programs.metadata;
+
+const URI = 'uri';
+const NAME = 'test';
+const SYMBOL = 'sym';
+const SELLER_FEE_BASIS_POINTS = 10;
 
 export function test() {
     let data = new DataV2();
