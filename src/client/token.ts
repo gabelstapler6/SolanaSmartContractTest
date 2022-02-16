@@ -34,13 +34,13 @@ export async function establishConnection(): Promise<Connection> {
     return connection;
 }
 
-export async function createAndMintNFT(minter: Keypair) {
+export async function createAndMintNFT(minter: Keypair): Promise<PublicKey> {
     let tokenAccount = new Keypair();
 
     let instructions = await createTokenMintInstructions(
         minter.publicKey,
         tokenAccount.publicKey,
-        0, 1, true);
+        0, 1, false);
 
     let transaction = new Transaction();
 
@@ -51,6 +51,7 @@ export async function createAndMintNFT(minter: Keypair) {
     await sendAndConfirmTransaction(connection, transaction, [minter, tokenAccount]);
 
     console.log("minted nft", tokenAccount.publicKey.toBase58());
+    return tokenAccount.publicKey;
 }
 
 async function createTokenMintInstructions(
