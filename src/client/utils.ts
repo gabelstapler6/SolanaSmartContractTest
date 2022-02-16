@@ -75,15 +75,6 @@ export async function createKeypairFromFile(
   return Keypair.fromSecretKey(secretKey);
 }
 
-
-export async function getAndLogSolBalance(pubkey: PublicKey, connection: Connection): Promise<number> {
-  let lamports = await connection.getBalance(pubkey);
-  let solBalance = lamports / LAMPORTS_PER_SOL;
-  console.log(pubkey.toBase58(), "has balance of", solBalance, "SOL");
-  return solBalance;
-}
-
-
 /**
  * Request Airdrop of 1 Sol to the specified keypair (only devnet)
  * @param keypair
