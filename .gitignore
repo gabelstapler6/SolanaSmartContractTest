@@ -3,6 +3,6 @@
 /.cargo
 /dist
 .env
-src/client/util/store
+token/client/util/store
 test-ledger/
 .DS_Store
