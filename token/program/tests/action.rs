@@ -9,7 +9,7 @@ use {
         transaction::Transaction,
         transport::TransportError,
     },
-    spl_token_2022::{
+    spl_token::{
         id, instruction,
         state::{Account, Mint},
     },
@@ -98,7 +98,6 @@ pub async fn mint_to(
     Ok(())
 }
 
-#[allow(deprecated)]
 pub async fn transfer(
     banks_client: &mut BanksClient,
     payer: &Keypair,

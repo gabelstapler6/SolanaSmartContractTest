@@ -1,14 +1,12 @@
 //! Error types
 
-use {
-    num_derive::FromPrimitive,
-    solana_program::{
-        decode_error::DecodeError,
-        msg,
-        program_error::{PrintProgramError, ProgramError},
-    },
-    thiserror::Error,
+use num_derive::FromPrimitive;
+use solana_program::{
+    decode_error::DecodeError,
+    msg,
+    program_error::{PrintProgramError, ProgramError},
 };
+use thiserror::Error;
 
 /// Errors that may be returned by the Token program.
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
@@ -80,82 +78,6 @@ pub enum TokenError {
     /// Instruction does not support non-native tokens
     #[error("Instruction does not support non-native tokens")]
     NonNativeNotSupported,
-
-    // 20
-    /// Extension type does not match already existing extensions
-    #[error("Extension type does not match already existing extensions")]
-    ExtensionTypeMismatch,
-    /// Extension does not match the base type provided
-    #[error("Extension does not match the base type provided")]
-    ExtensionBaseMismatch,
-    /// Extension already initialized on this account
-    #[error("Extension already initialized on this account")]
-    ExtensionAlreadyInitialized,
-    /// An account can only be closed if its confidential balance is zero
-    #[error("An account can only be closed if its confidential balance is zero")]
-    ConfidentialTransferAccountHasBalance,
-    /// Account not approved for confidential transfers
-    #[error("Account not approved for confidential transfers")]
-    ConfidentialTransferAccountNotApproved,
-
-    // 25
-    /// Account not accepting deposits or transfers
-    #[error("Account not accepting deposits or transfers")]
-    ConfidentialTransferDepositsAndTransfersDisabled,
-    /// ElGamal public key mismatch
-    #[error("ElGamal public key mismatch")]
-    ConfidentialTransferElGamalPubkeyMismatch,
-    /// Balance mismatch
-    #[error("Balance mismatch")]
-    ConfidentialTransferBalanceMismatch,
-    /// Mint has non-zero supply. Burn all tokens before closing the mint.
-    #[error("Mint has non-zero supply. Burn all tokens before closing the mint")]
-    MintHasSupply,
-    /// No authority exists to perform the desired operation
-    #[error("No authority exists to perform the desired operation")]
-    NoAuthorityExists,
-
-    // 30
-    /// Transfer fee exceeds maximum of 10,000 basis points
-    #[error("Transfer fee exceeds maximum of 10,000 basis points")]
-    TransferFeeExceedsMaximum,
-    /// Mint required for this account to transfer tokens, use `transfer_checked` or `transfer_checked_with_fee`
-    #[error("Mint required for this account to transfer tokens, use `transfer_checked` or `transfer_checked_with_fee`")]
-    MintRequiredForTransfer,
-    /// Calculated fee does not match expected fee
-    #[error("Calculated fee does not match expected fee")]
-    FeeMismatch,
-    /// Fee parameters associated with confidential transfer zero-knowledge proofs do not match fee parameters in mint
-    #[error(
-        "Fee parameters associated with zero-knowledge proofs do not match fee parameters in mint"
-    )]
-    FeeParametersMismatch,
-    /// The owner authority cannot be changed
-    #[error("The owner authority cannot be changed")]
-    ImmutableOwner,
-
-    // 35
-    /// An account can only be closed if its withheld fee balance is zero, harvest fees to the
-    /// mint and try again
-    #[error("An account can only be closed if its withheld fee balance is zero, harvest fees to the mint and try again")]
-    AccountHasWithheldTransferFees,
-
-    /// No memo in previous instruction; required for recipient to receive a transfer
-    #[error("No memo in previous instruction; required for recipient to receive a transfer")]
-    NoMemo,
-    /// Transfer is disabled for this mint
-    #[error("Transfer is disabled for this mint")]
-    NonTransferable,
-    /// Non-transferable tokens can't be minted to an account without immutable ownership
-    #[error("Non-transferable tokens can't be minted to an account without immutable ownership")]
-    NonTransferableNeedsImmutableOwnership,
-    /// The total number of `Deposit` and `Transfer` instructions to an account cannot exceed the
-    /// associated `maximum_pending_balance_credit_counter`
-    #[error(
-        "The total number of `Deposit` and `Transfer` instructions to an account cannot exceed
-            the associated `maximum_pending_balance_credit_counter`"
-    )]
-    MaximumPendingBalanceCreditCounterExceeded,
 }
 impl From<TokenError> for ProgramError {
     fn from(e: TokenError) -> Self {
@@ -171,7 +93,11 @@ impl<T> DecodeError<T> for TokenError {
 impl PrintProgramError for TokenError {
     fn print<E>(&self)
     where
-        E: 'static + std::error::Error + DecodeError<E> + num_traits::FromPrimitive,
+        E: 'static
+            + std::error::Error
+            + DecodeError<E>
+            + PrintProgramError
+            + num_traits::FromPrimitive,
     {
         match self {
             TokenError::NotRentExempt => msg!("Error: Lamport balance below rent-exempt threshold"),
@@ -207,66 +133,6 @@ impl PrintProgramError for TokenError {
             }
             TokenError::NonNativeNotSupported => {
                 msg!("Error: Instruction does not support non-native tokens")
-            }
-            TokenError::ExtensionTypeMismatch => {
-                msg!("Error: New extension type does not match already existing extensions")
-            }
-            TokenError::ExtensionBaseMismatch => {
-                msg!("Error: Extension does not match the base type provided")
-            }
-            TokenError::ExtensionAlreadyInitialized => {
-                msg!("Error: Extension already initialized on this account")
-            }
-            TokenError::ConfidentialTransferAccountHasBalance => {
-                msg!("Error: An account can only be closed if its confidential balance is zero")
-            }
-            TokenError::ConfidentialTransferAccountNotApproved => {
-                msg!("Error: Account not approved for confidential transfers")
-            }
-            TokenError::ConfidentialTransferDepositsAndTransfersDisabled => {
-                msg!("Error: Account not accepting deposits or transfers")
-            }
-            TokenError::ConfidentialTransferElGamalPubkeyMismatch => {
-                msg!("Error: ElGamal public key mismatch")
-            }
-            TokenError::ConfidentialTransferBalanceMismatch => {
-                msg!("Error: Balance mismatch")
-            }
-            TokenError::MintHasSupply => {
-                msg!("Error: Mint has non-zero supply. Burn all tokens before closing the mint")
-            }
-            TokenError::NoAuthorityExists => {
-                msg!("Error: No authority exists to perform the desired operation");
-            }
-            TokenError::TransferFeeExceedsMaximum => {
-                msg!("Error: Transfer fee exceeds maximum of 10,000 basis points");
-            }
-            TokenError::MintRequiredForTransfer => {
-                msg!("Mint required for this account to transfer tokens, use `transfer_checked` or `transfer_checked_with_fee`");
-            }
-            TokenError::FeeMismatch => {
-                msg!("Calculated fee does not match expected fee");
-            }
-            TokenError::FeeParametersMismatch => {
-                msg!("Fee parameters associated with zero-knowledge proofs do not match fee parameters in mint")
-            }
-            TokenError::ImmutableOwner => {
-                msg!("The owner authority cannot be changed");
-            }
-            TokenError::AccountHasWithheldTransferFees => {
-                msg!("Error: An account can only be closed if its withheld fee balance is zero, harvest fees to the mint and try again");
-            }
-            TokenError::NoMemo => {
-                msg!("Error: No memo in previous instruction; required for recipient to receive a transfer");
-            }
-            TokenError::NonTransferable => {
-                msg!("Transfer is disabled for this mint");
-            }
-            TokenError::NonTransferableNeedsImmutableOwnership => {
-                msg!("Non-transferable tokens can't be minted to an account without immutable ownership");
-            }
-            TokenError::MaximumPendingBalanceCreditCounterExceeded => {
-                msg!("The total number of `Deposit` and `Transfer` instructions to an account cannot exceed the associated `maximum_pending_balance_credit_counter`");
             }
         }
     }
