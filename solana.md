@@ -1,29 +1,6 @@
-# Sphere
+# Solana Basics
 
-Install <a href=https://www.rust-lang.org/tools/install>Rust</a> and <a href=https://docs.solana.com/cli/install-solana-cli-tools>Solana</a>.
-
-  - [Solana CLI Commands](#solana-cli-commands)
-    - [Print configuration](#print-configuration)
-    - [Switch Network](#switch-network)
-    - [Generate new Keypair](#generate-new-keypair)
-    - [Show public key of keypair](#show-public-key-of-keypair)
-    - [Set default keypair for solana cli](#set-default-keypair-for-solana-cli)
-    - [Airdrop sol to default keypair (devnet)](#airdrop-sol-to-default-keypair-devnet)
-    - [Balance of default keypair](#balance-of-default-keypair)
-    - [Get Keypair of Phantom wallet](#get-keypair-of-phantom-wallet)
-  - [SPL Token Commands](#spl-token-commands)
-    - [Create fungible token](#create-fungible-token)
-    - [Print supply of token](#print-supply-of-token)
-    - [Create on-chain account to hold token balance](#create-on-chain-account-to-hold-token-balance)
-    - [Mint tokens into account](#mint-tokens-into-account)
-    - [Show all tokens that default keypair owns](#show-all-tokens-that-default-keypair-owns)
-    - [Transfer token to other wallet](#transfer-token-to-other-wallet)
-    - [Transfer token to other wallet with sender funding](#transfer-token-to-other-wallet-with-sender-funding)
-    - [Create NFT (non fungible token)](#create-nft-non-fungible-token)
-    - [Create on-chain account to hold nft (same way as fungible)](#create-on-chain-account-to-hold-nft-same-way-as-fungible)
-    - [Mint one and only token into account](#mint-one-and-only-token-into-account)
-    - [Disable future minting of token](#disable-future-minting-of-token)
-
+Install <a href=https://www.rust-lang.org/tools/install>Rust</a> and <a href=https://docs.solana.com/cli/install-solana-cli-tools>Solana CLI</a>.
 
 ## Solana CLI Commands
 
