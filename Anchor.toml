@@ -1,0 +1,7 @@
+anchor_version = "0.24.2"
+solana_version = "1.11.6"
+
+[workspace]
+members = [
+  "token/program"
+]
