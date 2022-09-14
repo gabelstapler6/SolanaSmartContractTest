@@ -1,5 +1,5 @@
 {
-  "name": "sphere",
+  "name": "sphere-token",
   "version": "0.0.1",
   "description": "",
   "repository": {
@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "deploy": "cargo build-bpf && solana program deploy ./target/deploy/sphere_spl_token.so",
     "start": "ts-node src/client/main.ts",
     "start-with-test-validator": "start-server-and-test 'solana-test-validator --reset --quiet' http://localhost:8899/health start",
     "pretty": "prettier --write '{,src/**/}*.ts'"

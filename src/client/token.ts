@@ -11,16 +11,13 @@ import {
     TransactionInstruction
 } from '@solana/web3.js';
 
-import { MintLayout, Token, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { MintLayout, Token, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 import fs from 'mz/fs';
 import path from 'path';
 import * as borsh from 'borsh';
 
 import { createKeypairFromFile, getRpcUrl } from './utils';
-
-const SPHERE_TOKEN_PROGRAM_KEYPAIR_PATH = path.join('../../target/deploy', 'sphere_spl_token-keypair.json')
-var SphereTokenProgramId: PublicKey
 
 var connection: Connection
 
@@ -38,8 +35,6 @@ export async function establishConnection(): Promise<Connection> {
 }
 
 export async function createAndMintNFT(minter: Keypair): Promise<PublicKey> {
-    SphereTokenProgramId = (await createKeypairFromFile(SPHERE_TOKEN_PROGRAM_KEYPAIR_PATH)).publicKey
-
     let tokenAccount = new Keypair()
 
     let instructions = await createTokenMintInstructions(
@@ -77,14 +72,14 @@ async function createTokenMintInstructions(
             newAccountPubkey: tokenAccount,
             lamports: rentExemptMintBalance,
             space: MintLayout.span,
-            programId: SphereTokenProgramId,
+            programId: TOKEN_PROGRAM_ID,
         })
     );
 
     // Create the new tokenAccount
     instructions.push(
         Token.createInitMintInstruction(
-            SphereTokenProgramId,
+            TOKEN_PROGRAM_ID,
             tokenAccount,
             decimals,
             minter,
@@ -95,7 +90,7 @@ async function createTokenMintInstructions(
     // Calculate the address of the on chain account for the minter (to hold the amount of the token)
     const associatedAccount = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
-        SphereTokenProgramId,
+        TOKEN_PROGRAM_ID,
         tokenAccount,
         minter
     );
@@ -104,7 +99,7 @@ async function createTokenMintInstructions(
     instructions.push(
         Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID,
-            SphereTokenProgramId,
+            TOKEN_PROGRAM_ID,
             tokenAccount,
             associatedAccount,
             minter,
@@ -115,7 +110,7 @@ async function createTokenMintInstructions(
     // Execute the mint into the on chain account of the minter
     instructions.push(
         Token.createMintToInstruction(
-            SphereTokenProgramId,
+            TOKEN_PROGRAM_ID,
             tokenAccount,
             associatedAccount,
             minter,
@@ -128,7 +123,7 @@ async function createTokenMintInstructions(
         // Disable any future minting of the token
         instructions.push(
             Token.createSetAuthorityInstruction(
-                SphereTokenProgramId,
+                TOKEN_PROGRAM_ID,
                 tokenAccount,
                 null,
                 'MintTokens',

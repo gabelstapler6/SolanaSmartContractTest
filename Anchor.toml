@@ -3,5 +3,5 @@ solana_version = "1.11.6"
 
 [workspace]
 members = [
-  "token/program"
+  "src/program"
 ]
